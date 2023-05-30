@@ -38,7 +38,7 @@ class QuantumDeepField(nn.Module):
         self.layer_functional = layer_functional
         self.operation = operation
         self.layer_HK = layer_HK
-
+    #把向量转化成tensor
     def list_to_batch(self, xs, dtype=torch.FloatTensor, cat=None, axis=None):
         """Transform the list of numpy data into the batch of tensor data."""
         xs = [dtype(x).to(self.device) for x in xs]
@@ -46,7 +46,7 @@ class QuantumDeepField(nn.Module):
             return torch.cat(xs, axis)
         else:
             return xs  # w/o cat (i.e., the list (not batch) of tensor data).
-
+    #填充把列表里面的每个矩阵填充至对角状态
     def pad(self, matrices, pad_value):
         """Pad the list of matrices
         with a pad_value (e.g., 0 and large value) for batch processing.
@@ -65,7 +65,12 @@ class QuantumDeepField(nn.Module):
             i += m
             j += n
         return pad_matrices
-
+    '''
+    三个参数原子轨道，距离矩阵，量子数
+    计算高斯类型轨道并进行二范数归一化，即使每个列向量的平方加和等于1
+    dim=0 默认表示按列计算操作
+    F.normalize(GTOs, 2, 0)具体操作每列向量平方和开根号，再将每个列向量除以这些数
+    '''
     def basis_matrix(self, atomic_orbitals,
                      distance_matrices, quantum_numbers):
         """Transform the distance matrix into a basis matrix,
